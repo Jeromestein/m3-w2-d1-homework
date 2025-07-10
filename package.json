@@ -1,0 +1,16 @@
+{
+  "name": "statsdb-mongodb",
+  "version": "1.0.0",
+  "description": "MongoDB database creation for stats data",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  },
+  "keywords": ["mongodb", "database", "stats"],
+  "author": "",
+  "license": "MIT"
+} 
