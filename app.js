@@ -67,6 +67,10 @@ async function createStatsDatabase() {
         const result = await collection.insertMany(stats);
         console.log(`📈 Successfully inserted ${result.insertedCount} documents into statsdb.city_stats collection!`);
         
+        // Create uscensus collection
+        const uscensusCollection = db.collection('uscensus');
+        console.log('📋 Successfully created uscensus collection!');
+        
         // List all databases to confirm creation
         const adminDb = client.db('admin');
         const databases = await adminDb.admin().listDatabases();
