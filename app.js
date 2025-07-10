@@ -2,7 +2,6 @@ const { MongoClient } = require('mongodb');
 
 // MongoDB connection string
 const uri = "mongodb://localhost:27017";
-const client = new MongoClient(uri);
 
 // Stats data array
 var stats = [
@@ -66,6 +65,7 @@ var stats = [
 
 // Function to add data to collection
 async function addDataToCollection() {
+    const client = new MongoClient(uri);
     try {
         // Connect to MongoDB
         console.log('🔗 Connecting to MongoDB...');
@@ -98,6 +98,7 @@ async function addDataToCollection() {
 
 // Function to create database and insert data
 async function createStatsDatabase() {
+    const client = new MongoClient(uri);
     try {
         // Connect to MongoDB
         console.log('Connecting to MongoDB...');
@@ -134,6 +135,47 @@ async function createStatsDatabase() {
     }
 }
 
+// Function to query Corona, NY zip code
+async function findCoronaZipCode() {
+    const client = new MongoClient(uri);
+    try {
+        // Connect to MongoDB
+        console.log('🔗 Connecting to MongoDB...');
+        await client.connect();
+        console.log('✅ Successfully connected to MongoDB!');
+        
+        // Access database and collection
+        const db = client.db('statsdb');
+        const collection = db.collection('city_stats');
+        
+        // Query for Corona, NY
+        const result = await collection.findOne({ 
+            'city': 'Corona', 
+            'state': 'NY' 
+        });
+        
+        if (result) {
+            console.log('🎯 Found Corona, NY data:');
+            console.log(`📍 City: ${result.city}, ${result.state}`);
+            console.log(`📮 Zip Code: ${result.zip}`);
+            console.log(`💰 Income: $${result.income}`);
+            console.log(`👤 Age: ${result.age}`);
+        } else {
+            console.log('❌ No data found for Corona, NY');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error querying database:', error);
+    } finally {
+        // Close connection
+        await client.close();
+        console.log('🔌 MongoDB connection closed.');
+    }
+}
+
 // Run the function to add data to collection
 addDataToCollection();
+
+// Run the function to query Corona, NY zip code
+findCoronaZipCode();
 
