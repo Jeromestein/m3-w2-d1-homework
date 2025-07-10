@@ -216,6 +216,68 @@ async function findCaliforniaCitiesIncome() {
     }
 }
 
+// Function to sort records by state in ascending order and remove duplicates
+async function sortRecordsByStateAndRemoveDuplicates() {
+    const client = new MongoClient(uri);
+    try {
+        // Connect to MongoDB
+        console.log('🔗 Connecting to MongoDB...');
+        await client.connect();
+        console.log('✅ Successfully connected to MongoDB!');
+        
+        // Access database and collection
+        const db = client.db('statsdb');
+        const collection = db.collection('city_stats');
+        
+        // Sort records by state in ascending order (1 for ascending, -1 for descending)
+        // and remove duplicates based on all fields
+        const results = await collection.find({})
+            .sort({ state: 1 }) // 1 for ascending order
+            .toArray();
+        
+        // Remove duplicates by creating a Map with unique keys
+        const uniqueRecords = new Map();
+        results.forEach(record => {
+            // Create a unique key based on all fields
+            const key = `${record.city}-${record.zip}-${record.state}-${record.income}-${record.age}`;
+            if (!uniqueRecords.has(key)) {
+                uniqueRecords.set(key, record);
+            }
+        });
+        
+        // Convert Map values back to array
+        const sortedUniqueRecords = Array.from(uniqueRecords.values());
+        
+        // Output message to terminal
+        console.log('📊 Records sorted by state in ascending order and duplicates removed:');
+        console.log('===============================================================');
+        console.log(`📈 Total records after removing duplicates: ${sortedUniqueRecords.length}`);
+        console.log('📋 Sorted and unique records:');
+        console.log('-----------------------------');
+        
+        sortedUniqueRecords.forEach((record, index) => {
+            console.log(`${index + 1}. ${record.city}, ${record.state} (${record.zip})`);
+            console.log(`   💰 Income: $${record.income}`);
+            console.log(`   👤 Age: ${record.age}`);
+            console.log('---');
+        });
+        
+        // Display the new sorted list
+        console.log('🔄 New sorted list (state order):');
+        console.log('================================');
+        sortedUniqueRecords.forEach((record, index) => {
+            console.log(`${index + 1}. ${record.state} - ${record.city}`);
+        });
+        
+    } catch (error) {
+        console.error('❌ Error sorting and removing duplicates:', error);
+    } finally {
+        // Close connection
+        await client.close();
+        console.log('🔌 MongoDB connection closed.');
+    }
+}
+
 // Run the function to add data to collection
 addDataToCollection();
 
@@ -224,4 +286,7 @@ findCoronaZipCode();
 
 // Run the function to query California cities income
 findCaliforniaCitiesIncome();
+
+// Run the function to sort records by state and remove duplicates
+sortRecordsByStateAndRemoveDuplicates();
 
