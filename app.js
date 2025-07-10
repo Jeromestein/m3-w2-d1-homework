@@ -58,8 +58,8 @@ var stats = [
         'city': 'Ketchikan',
         'zip': '99950',
         'state': 'AK',
-        'income': '00000',
-        'age': '00'
+        'income': '38910',
+        'age': '46'
     }
 ];
 
