@@ -173,9 +173,55 @@ async function findCoronaZipCode() {
     }
 }
 
+// Function to query all cities in California and their income
+async function findCaliforniaCitiesIncome() {
+    const client = new MongoClient(uri);
+    try {
+        // Connect to MongoDB
+        console.log('🔗 Connecting to MongoDB...');
+        await client.connect();
+        console.log('✅ Successfully connected to MongoDB!');
+        
+        // Access database and collection
+        const db = client.db('statsdb');
+        const collection = db.collection('city_stats');
+        
+        // Query for all cities in California
+        // Example: var myquery = { address: /^S/ };
+        // Here we use: var myquery = { state: 'CA' };
+        var myquery = { state: 'CA' };
+        
+        const results = await collection.find(myquery).toArray();
+        
+        if (results.length > 0) {
+            console.log('🌴 Found California cities and their income:');
+            console.log('==========================================');
+            results.forEach((city, index) => {
+                console.log(`${index + 1}. ${city.city}, CA (${city.zip})`);
+                console.log(`   💰 Income: $${city.income}`);
+                console.log(`   👤 Age: ${city.age}`);
+                console.log('---');
+            });
+            console.log(`📊 Total California cities found: ${results.length}`);
+        } else {
+            console.log('❌ No California cities found in the database');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error querying California cities:', error);
+    } finally {
+        // Close connection
+        await client.close();
+        console.log('🔌 MongoDB connection closed.');
+    }
+}
+
 // Run the function to add data to collection
 addDataToCollection();
 
 // Run the function to query Corona, NY zip code
 findCoronaZipCode();
+
+// Run the function to query California cities income
+findCaliforniaCitiesIncome();
 
